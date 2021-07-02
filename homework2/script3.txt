@@ -4,6 +4,7 @@ if [[ $(id -u) -ne 0 ]]; then
 	echo "This script must be run as root"
 fi
 
+echo "Please write a login it'is a very important"
 read -p "Login:" username
 
 if cut -d: -f1 /etc/passwd | grep -w "$username"; then
@@ -12,6 +13,7 @@ else
 	sudo useradd $username
 fi
 
+echo "Please write a paasword it's a very important"
 read -s -p "Enter password" password
 #pass = read -rs PASSWD
 #sudo -k
