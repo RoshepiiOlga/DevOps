@@ -1,0 +1,94 @@
+#Describe (in some words) what is the difference between configurations with and without --permanent flag.
+#        Most firewall-cmd operations can take the --permanent flag to indicate that the non-ephemeral firewall should be targeted. This separation means that can test rules in your active firewall instance and 
+    then reload if there are problems.
+
+    Check firewalld state.
+            sudo firewall-cmd --state
+
+    Get current default zone, active zones, and list of all pre-configured zones.
+    You can find out the current zone:
+     firewall-cmd --get-default-zone
+    Checking the zone will be the only active zone: 
+    firewall-cmd --get-active-zone
+    Display default zone configuration settings: 
+    sudo firewall-cmd --list-all
+
+    Get list of rules for any of the default zones.
+        The list of all default service types: 
+    sudo firewall-cmd --get-services
+
+    Get list of all pre-configured services.
+    Lets you get a list of predefined services that can be used if firewall rules : 
+    firewall-cmd --get-services
+
+    Add http, https, and any other services (from the list of default services) to the current default zone. Be sure that these settings will remain in place after system’s reboot.
+    sudo firewall-cmd --zone=work --add-service=http
+    To make sure the service is successful, use the flag --list-services:
+    sudo firewall-cmd --zone=work --list-services
+    To leave the port open after rebooting, you must use the flag --permanent:
+    sudo firewall-cmd --permanent --zone=work --add-service=http
+    sudo firewall-cmd --zone=work --add-service=http
+    sudo firewall-cmd --zone=work --list-services
+    sudo firewall-cmd  --permanent --zone=work --add-service=https
+
+    Create your own service with name lob-app, and add ports 3333/tcp, 4444/tcp, 5555-6666/udp ports to this service.
+    Creating our own service:
+    sudo firewall-cmd --permanent --new-service=lob-app
+    Information about the created server:
+        sudo firewall-cmd --permanent --add-service=lob-app
+    To open a specific port use the following command:
+    sudo firewall-cmd --zone=work --add-port=3333/tcp
+    sudo firewall-cmd --zone=work --add-port=4444/tcp
+    sudo firewall-cmd --zone=work --add-port=5555-6666/udp
+    To make sure that it has been successfully added, use the flag --list-ports:
+    sudo firewall-cmd --zone=work --list-ports
+
+     Create new zones with names publicweb and privatedb.
+    Creating new zones:
+        firewall-cmd --permanent --new-zone==publicweb
+        sudo firewall-cmd --reload
+    List of available services:
+        firewall-cmd --get-services
+    Change the current zone:
+    sudo firewall-cmd --set-default-zone=publicweb
+
+     Add http, https, ssh and lob-abb services to publicweb zone.
+    Add the service to the zone:
+    sudo firewall-cmd --zone=publicweb --add-service=http --permanent
+    sudo firewall-cmd --zone=publicweb --add-service=https --permanent
+    sudo firewall-cmd --zone=publicweb --add-service=ssh --permanent
+    Updating the rules:
+    sudo firewall-cmd --reload
+    View zone configuration:
+    sudo firewall-cmd --zone=publicweb --list-all
+
+     Add ssh, mysql and mssql services to privatedb zone.
+        Add the service to the zone:
+        sudo firewall-cmd --zone=privatedb --add-service=ssh --permanent
+    sudo firewall-cmd --zone=privatedb --add-service=mssql --permanent
+    sudo firewall-cmd --zone=privatedb --add-service=mysql --permanent
+    Updating the rules:
+    sudo firewall-cmd --reload
+    View zone configuretion:
+    sudo firewall-cmd --zone=privatedb --list-all
+
+     Add a rule to privatedb zone to allow connections from 192.168.56.0/24 network and to port 3306/tcp only.
+    Add a rule:
+    firewall-cmd --permanent --add-rich-rule=’rule family=”ipv4” source adress=”192.168.56.0/24.” port port=”3306” protocol=”tcp” accept ‘
+
+    Associate the first network adapter with zone publicweb and second network adapter with zone privatedb.
+        Associate the first network:
+            sudo firewall-cmd --direct  --permanent --add-rule ipv4 filter FORWARD 0 -i wlp3s0 -o publicweb -j ACCEPT
+        Associate the second network:
+        sudo firewall-cmd --direct --permanent --add-rule ipv4 filter FORWARD 0 -i enp2s0 -o privatedb -j ACCEPT
+
+
+     Set the default zone to publicweb.
+        sudo firewall-cmd --zone=work --change-interface=publicweb
+        Make sure that the interface is attached to the new zone:
+    firewall-cmd --get-active-zones
+    Reload the interface:
+    sudo systemctl restart firewalld.rervice
+    Make sure that the interface is attached to the new zone:
+    sudo firewall-cmd --get-active-zones
+

@@ -1,0 +1,5 @@
+#!bin/bash
+
+#The command that starts the installation
+
+sudo yum install /homework2/install_prime.sh

@@ -1,0 +1,32 @@
+#!bin/bash
+
+if [[ $(id -u) -ne 0 ]]; then
+	echo "This script must be run as root"
+fi
+
+read -p "Login:" username
+
+if cut -d: -f1 /etc/passwd | grep -w "$username"; then
+	echo "user $username found"
+else 
+	sudo useradd $username
+fi
+
+read -s -p "Enter password" password
+#pass = read -rs PASSWD
+#sudo -k
+if su -c true "#username"; then
+		echo 'true'
+else
+echo "False"
+fi
+
+#read -s  -p "Enter Password: " password \n
+
+#if [ -z "$pasword"]; then
+#	echo "Password is blank. Please set the password for user $username manually"
+#else 
+#	sudo passwd $username
+#	pwd
+#user=$(id -u)
+#fi
