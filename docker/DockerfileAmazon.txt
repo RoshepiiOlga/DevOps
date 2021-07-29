@@ -1,0 +1,9 @@
+FROM amazonlinux
+
+RUN yum -y update
+RUN yum -y install https
+
+RUN echo 'Hello, my name is Olga. Topic our lesson "Containerization: як пройти Суецький канал і не застрягти там надовго"' > /var/www/html/index.html
+CMD ["/usr/sbin/https","-D","FOREGROUND"]
+
+EXPOSE 80
