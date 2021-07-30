@@ -2,7 +2,7 @@ FROM nginx:latest
 
 # Adding custom index.html hosted on Github Gist
 
-ADD https://raw.githubusercontent.com/RoshepiiOlga/TestSoftpro/master/index.html /usr/share/nginx/html/
+ADD https://raw.githubusercontent.com/RoshepiiOlga/DevOps/bra/docker/index.html /usr/share/nginx/html/
 
 # Adding read permissions to custom index.html
 
