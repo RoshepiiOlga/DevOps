@@ -29,6 +29,16 @@ variable "tags" {
   }
 }
 
+variable "access_key" {
+  type    = string
+  default = "${env("AWS_ACCESS_KEY_ID")}"
+}
+
+variable "secret_key" {
+  type    = string
+  default = "${env("AWS_SECRET_ACCESS_KEY")}"
+}
+
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
 }
@@ -38,10 +48,8 @@ source "amazon-ebs" "ubuntu" {
   instance_type = var.instance_type
   region        = var.region
   ami_regions   = var.ami_regions
-  access_key    = "AKIA2MZKXLEWXTICON73"
-  secret_key    = "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"
-  #  vpc_id        = "vpc-003b5c6a"
-  #  subnet_id     = "subnet-9e55dcd2"
+  access_key    = "${var.access_key}"
+  secret_key    = "${var.secret_key}"
 
   source_ami_filter {
     filters = {
