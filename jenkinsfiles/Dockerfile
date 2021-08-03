@@ -1,6 +1,7 @@
 FROM ubuntu:18.04
 
-RUN apt -y update && apt -y install apache2 && docker images &&\
+RUN apt -y update && apt -y install apache2 &&\
+RUN sudo docker images 
   echo 'Hello World from Docker!'
 
 
