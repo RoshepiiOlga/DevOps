@@ -1,0 +1,59 @@
+{
+  "builds": [
+    {
+      "name": "ubuntu",
+      "builder_type": "amazon-ebs",
+      "build_time": 1627850532,
+      "files": null,
+      "artifact_id": "eu-central-1:ami-095b1002be1347877,us-east-1:ami-017ea4d14364fa966,us-west-2:ami-0440480a675929e26",
+      "packer_run_uuid": "4a03c2f1-e94e-be49-df81-422062971473",
+      "custom_data": null
+    },
+    {
+      "name": "ubuntu",
+      "builder_type": "amazon-ebs",
+      "build_time": 1627851654,
+      "files": null,
+      "artifact_id": "eu-central-1:ami-02291045b19d8329b,us-east-1:ami-0a4add88110bfb787,us-west-2:ami-02acc91c63af62ee0",
+      "packer_run_uuid": "c4c31844-511f-324b-ef54-ebd61c68a051",
+      "custom_data": null
+    },
+    {
+      "name": "ubuntu",
+      "builder_type": "amazon-ebs",
+      "build_time": 1627852337,
+      "files": null,
+      "artifact_id": "eu-central-1:ami-05100b1f1f36b6f40,us-east-1:ami-0bf2f76d4f589c0d2,us-west-2:ami-06ec656347a436520",
+      "packer_run_uuid": "4b111a7b-2509-fab6-0221-98ef15fd1d0e",
+      "custom_data": null
+    },
+    {
+      "name": "ubuntu",
+      "builder_type": "amazon-ebs",
+      "build_time": 1627853048,
+      "files": null,
+      "artifact_id": "eu-central-1:ami-050cab7ba53a6e2ec,us-east-1:ami-06982201485bd398b,us-west-2:ami-0920c17ace5402eee",
+      "packer_run_uuid": "6c8546d1-8440-d47c-e2a3-bdb677bae4a3",
+      "custom_data": null
+    },
+    {
+      "name": "ubuntu",
+      "builder_type": "amazon-ebs",
+      "build_time": 1627853635,
+      "files": null,
+      "artifact_id": "eu-central-1:ami-08b73ec92f7adf6d5,us-east-1:ami-0719ec47e4f0a86aa,us-west-2:ami-0e1a3c05664bbd80e",
+      "packer_run_uuid": "31728517-5b74-1c1e-92a8-d733102a5cc5",
+      "custom_data": null
+    },
+    {
+      "name": "ubuntu",
+      "builder_type": "amazon-ebs",
+      "build_time": 1627854607,
+      "files": null,
+      "artifact_id": "eu-central-1:ami-0029bb4103b3cc5c9,us-east-1:ami-016f17a081f3f40fe,us-west-2:ami-05735cd654fee7894",
+      "packer_run_uuid": "1924eb12-76fc-69c9-c555-d2646ef0b14c",
+      "custom_data": null
+    }
+  ],
+  "last_run_uuid": "1924eb12-76fc-69c9-c555-d2646ef0b14c"
+}

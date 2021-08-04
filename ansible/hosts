@@ -1,0 +1,15 @@
+[all:vars]
+ansible_user=user1
+ansible_ssh_pass=/homeworks_for_DevOps/ansible/.ssh/id_rsa.pub
+ansible_port=22
+
+[web]
+node1 ansible_host=192.168.0.179
+node2 ansible_host=172.17.0.1
+node3 ansible_host=192.10.240.0
+
+[ftpserver]
+node2 ansible_host=172.17.0.1
+
+[control]
+ansible ansible_host=127.0.0.1
