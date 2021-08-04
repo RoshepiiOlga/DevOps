@@ -1,23 +1,16 @@
-// Run docker build
-properties([disableConcurrentBuilds()])
-
-pipeline {
-    agent { 
-        label 'master'
+pipeline {  environment {
+    registry = "https://github.com/RoshepiiOlga/DevOps/blob/bra/jenkinsfiles/docker_build.jenkins"
+    registryCredential = 'github'
+  }  agent any  stages {
+    stage('Building image') {
+      steps{
+        script {
+          docker.build registry + ":$BUILD_NUMBER"
         }
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
-        timestamps()
+      }
     }
-    stages {
-        stage("create docker image") {
-            steps {
-                echo " ============== start building image =================="
-                dir ('/homeworks_for_DevOps/docker/DockerfileAmazon.txt') {
-                	sh 'docker images '
-                }
-            }
-        }
-    }
+  }
 }
+
+
 
