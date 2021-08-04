@@ -1,36 +1,12 @@
 pipeline {
-    environment {
-        registry = "RoshepiiOlga/DevOps/blob/bra/jenkinsfiles/docker_build.jenkins"
-        registryCredential = 'github'
-        dockerImage = ''
+    agent {
+        docker { image 'testimage' }
     }
-    agent any
     stages {
-        stage('Cloning Git') {
-          steps {
-            git 'https://github.com/RoshepiiOlga/DevOps/blob/bra/jenkinsfiles/docker_build.jenkins'
-          }
-        }
-        stage('Building image') {
-          steps{
-            script {
-              dockerImage = docker.build registry + ":$BUILD_NUMBER"
+        stage('Test') {
+            steps {
+                sh 'node --version'
             }
-          }
-        }
-        stage('Deploy Image') {
-          steps{
-            script {
-              docker.withRegistry( '', registryCredential ) {
-                dockerImage.push()
-              }
-            }
-          }
-        }
-        stage('Remove Unused docker image') {
-          steps{
-            sh "docker rmi $registry:$BUILD_NUMBER"
-          }
         }
     }
 }
