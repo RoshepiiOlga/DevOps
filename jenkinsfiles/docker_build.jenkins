@@ -1,21 +1,19 @@
 pipeline {
   environment {
-    imagename = "roshepii/devops"
-    registryCredential = 'roshepii-dockerhub'
-    dockerImage = ''
+    registry = "roshepii/docker-test"
+    registryCredential = ‘github’
   }
   agent any
   stages {
     stage('Cloning Git') {
       steps {
-        git([url: 'https://github.com/RoshepiiOlga/DevOps.git', branch: 'next', credentialsId: 'roshepii-github-user-token'])
-
+        git 'https://github.com/RoshepiiOlga/DevOps.git'
       }
     }
     stage('Building image') {
       steps{
         script {
-          dockerImage = docker.build imagename
+          docker.build registry + ":$BUILD_NUMBER"
         }
       }
     }
