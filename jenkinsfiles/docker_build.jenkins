@@ -1,6 +1,6 @@
 pipeline {
     environment {
-        imagename = "roshepiyolga/devops"
+        imagename = "testimage:test1"
         registryCredential = 'roshepiyolga'
         dockerImage = ''
     }
@@ -14,7 +14,7 @@ pipeline {
         stage('Building image') {
             steps{
                 script {
-                    dockerImage = docker.build imagename 
+                    dockerImage = docker build -t $imagename .
                 }
             }
         }
