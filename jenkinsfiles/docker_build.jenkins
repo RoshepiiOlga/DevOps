@@ -15,7 +15,7 @@ pipeline {
         stage('Building image') {
             steps{
                 script {
-                    docker.build("$imagename", " -t ${imagetag} --file "https://github.com/RoshepiiOlga/DevOps/blob/next/jenkinsfiles/Dockerfile")
+                    docker.build("$imagename", " -t ${imagetag} --file "/DevOps/blob/next/jenkinsfiles/Dockerfile/")
                 }
 
             }
