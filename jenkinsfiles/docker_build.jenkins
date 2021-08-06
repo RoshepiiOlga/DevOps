@@ -3,6 +3,7 @@ pipeline {
         imagename = "testimage"
         imagetag = "test1"
         registryCredential = 'roshepiyolga'
+        address = 'https://github.com/RoshepiiOlga/DevOps/tree/next/jenkinsfiles/Dockerfile'
         dockerImage = ''
     }
     agent any
@@ -15,7 +16,7 @@ pipeline {
         stage('Building image') {
             steps{
                 script {
-                    docker.build("$imagename", " -t ${imagetag} -f /jenkinsfiles/Dockerfile )
+                    docker.build("$imagename", " -t ${imagetag} -f ${address})
                 }
 
             }
