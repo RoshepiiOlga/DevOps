@@ -1,0 +1,17 @@
+- name: Alter sudo config
+  tags: alter-sudo
+  copy:
+    src: sudoers
+    dest: /etc/sudoers
+    owner: root
+    group: root
+    mode: "u=rw,go=r"
+
+- name: Create a neat place for sudo replay logs
+  tags: alter-sudo
+  file:
+    dest: /var/log/sudo-io
+    owner: root
+    group: root
+    mode: "u=rwx,go=rx"
+    state: directory

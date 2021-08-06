@@ -1,0 +1,91 @@
+---
+- name: AWS VPC
+  gather_facts: true
+  hosts: localhost
+  connection: localhost
+
+  tasks:
+
+    - name: Role Parameters
+      set_fact:
+        profile: "{{ lookup('env', 'AWS_PROFILE') }}"
+        cidr_block: 10.1.0.0/16
+        subnet_mask_size: 20
+
+    - name: aws_region_info
+      aws_region_info:
+        filters:
+          region_name: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
+      register: aws_region_info
+
+    - name: aws_az_info
+      aws_az_info:
+        filters:
+          region_name: "{{ aws_region_info.regions[0].region_name }}"
+      register: aws_az_info
+
+    - name: region
+      vars:
+        region: "{{ aws_region_info.regions[0].region_name }}"
+      set_fact:
+        region: "{{ region }}"
+
+    - name: "{{ profile }} VPC"
+      ec2_vpc_net:
+        state: absent
+        name: "{{ profile }}"
+        region: "{{ region }}"
+        cidr_block: "{{ cidr_block }}"
+      register: ec2_vpc_net
+      ignore_errors: yes
+
+    - name: vpc
+      vars:
+        vpc: "{{ ec2_vpc_net.vpc }}"
+      set_fact:
+        vpc: "{{ vpc }}"
+
+    - name: "{{ profile }} VPC Subnets"
+      vars:
+        json: "{{ aws_az_info }}"
+        query: "availability_zones[].zone_name"
+        availability_zones: "{{ json | json_query(query) }}"
+      ec2_vpc_subnet:
+        state: absent
+        vpc_id: "{{ vpc.id }}"
+        az: "{{ item }}"
+        cidr: >-
+          {{ vpc.cidr_block | ipsubnet(subnet_mask_size, ansible_loop.index0) }}
+      loop: "{{ availability_zones }}"
+      loop_control:
+        extended: yes
+      ignore_errors: yes
+
+    - name: ec2_vpc_subnet_info
+      ec2_vpc_subnet_info:
+        filters:
+          vpc-id: "{{ vpc.id }}"
+      register: ec2_vpc_subnet_info
+
+    - name: "{{ profile }} VPC IGW"
+      ec2_vpc_igw:
+        vpc_id: "{{ vpc.id }}"
+        state: absent
+      register: ec2_vpc_igw
+      ignore_errors: yes
+
+    - name: "{{ profile }} VPC IGW Route Table"
+      vars:
+        json: "{{ ec2_vpc_subnet_info }}"
+        query: "subnets[].id"
+        subnets: "{{ json | json_query(query) }}"
+      ec2_vpc_route_table:
+        state: absent
+        vpc_id: "{{ vpc.id }}"
+        tags:
+          Name: Internet
+        subnets: "{{ subnets }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ ec2_vpc_igw.gateway_id }}"
+      ignore_errors: yes

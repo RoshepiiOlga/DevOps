@@ -1,0 +1,66 @@
+{
+	"variables": {
+		"ami_name": "amazon-linux-2-arm-{{timestamp}}",
+		"instance_size": "t4g.micro",
+		"base_ami": "ami-07563b76f95e4dc63",
+		"subnet_id": "subnet-e1f651bb"
+	},
+	"builders": [
+		{
+			"type": "amazon-ebs",
+			"name": "{{user `ami_name`}}",
+			"region": "eu-west-1",
+			"ami_regions": "eu-west-1",
+			"source_ami": "{{user `base_ami`}}",
+			"instance_type": "{{user `instance_size`}}",
+			"ssh_username": "ec2-user",
+			"ami_name": "{{user `ami_name`}}",
+			"subnet_id": "{{user `subnet_id`}}",
+			"ami_virtualization_type": "hvm",
+			"ebs_optimized": true,
+			"ena_support": true,
+			"force_deregister": true,
+			"force_delete_snapshot": true,
+			"associate_public_ip_address": true,
+			"run_tags": {
+				"role": "packer"
+			},
+			"tags": {
+				"Name": "{{user `ami_name`}}",
+				"Purpose": "base image"
+			}
+		}
+	],
+	"provisioners": [
+		{
+			"type": "shell",
+			"inline": [
+				"while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done",
+				"sudo amazon-linux-extras install ansible2",
+				"sudo yum install -y curl python3-pip ansible"
+			]
+		},
+		{
+			"type": "breakpoint",
+			"disable": false,
+			"note": "this is a breakpoint"
+		},
+		{
+			"type": "ansible-local",
+			"playbook_file": "../../ansible/run_playbook.yaml",
+			"playbook_dir": "../../ansible",
+			"role_paths": [
+				"../../ansible/roles"
+			],
+			"clean_staging_directory": true
+		},
+		{
+			"type": "shell",
+			"inline": [
+				"sudo mkdir -p /opt/lynis && cd /opt/lynis && sudo  git clone https://github.com/CISOfy/lynis .",
+				"echo '\nlynis Results:\n'",
+				"sudo chown -R 0:0 /opt/lynis/ && sudo bash /opt/lynis/lynis audit system --reverse-colors --verbose"
+			]
+		}
+	]
+}

@@ -1,0 +1,71 @@
+# ansible-galaxy collection install amazon.aws
+# https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html
+# ansible-playbook __provision_ec2.yml -vvv
+# ansible-inventory -i inventory.aws_ec2 --list
+# ansible-inventory -i inventory.aws_ec2 --graph
+# ansible -i inventory/inventory.aws_ec2 -m ping all
+# ansible -i inventory/inventory.aws_ec2 tag_ENV_ssudemo -u ec2-user -m sheel -a 'echo "Hello Kitty"'
+# [defaults]
+# enable_plugins = aws_ec2
+# inventory       = inventory/aws/inventory.aws_ec2
+# --private-key vykob.pem
+# ansible-doc -t inventory -
+#plugin: amazon.aws.aws_ec2
+#plugin: auto
+
+plugin: aws_ec2
+
+# cache: yes
+# cache_plugin: jsonfile
+# cache_timeout: 7200
+# cache_connection: /tmp/aws_inventory
+# cache_prefix: aws_ec2
+
+boto_profile: "{{ lookup('env', 'AWS_PROFILE') | default('aws_profile', true) }}"
+regions:
+  - eu-west-1
+# filters - Used to filter out EC2 instances based on conditions. Here we are selecting only running instances with tag "Env: Prod"
+# filters:
+#    instance-state-name: running
+#   tag:Environment:
+#     - dev-*
+#     - share-resource
+#     - hotfix
+#     - ssudemo
+#   tag:env:
+#     - ansible
+strict: false
+# keyed_groups - Define how you want to create groups.
+keyed_groups:
+  - key: tags.Environment
+    prefix: Environment
+    separator: "_"
+  # add hosts to tag_Name_value groups for each aws_ec2 host's tags.Name variable
+  - key: tags.Name
+    prefix: tag_Name_
+    separator: ""
+  - prefix: ENV
+    key: tags['ENV']
+  - prefix: dev
+    key: tags['ssm']
+  - key: tags
+    prefix: tag
+  - prefix: instance_type
+    key: instance_type
+  - key: placement.region
+    prefix: aws_region
+
+groups:
+  # add hosts to the group development if any of the dictionary's keys or values is the word 'devel'
+  ssudemo: "'ssudemo' in (tags|list)"
+
+hostnames:
+  - network-interface.association.public-ip
+  - ip-address
+  - dns-name
+  - tag:Name
+  - private-ip-address
+
+# compose - Output (you can mention private_ip_address or public_ip_address based on your need)
+compose:
+  ansible_host: public-ip-address

@@ -1,0 +1,3 @@
+---
+fqdn: "{{ inventory_hostname }}"
+global_default: "global_default_text"

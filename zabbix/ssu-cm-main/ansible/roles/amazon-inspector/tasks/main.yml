@@ -1,0 +1,27 @@
+---
+
+- name: Copy installer script
+  copy:
+    src: aws_inspector_install.sh
+    dest: /usr/bin/
+    owner: root
+    group: root
+    mode: "u=rwx,go=rx"
+  become: true
+
+- name: Copy installer script service
+  copy:
+    src: aws_inspector_install.service
+    dest: /etc/systemd/system/
+    owner: root
+    group: root
+    mode: "u=rwx,go=rx"
+  become: true
+
+- name: Schedule installer script to run on boot
+  systemd:
+    name: aws_inspector_install
+    daemon_reload: true
+    state: stopped
+    enabled: true
+  become: true

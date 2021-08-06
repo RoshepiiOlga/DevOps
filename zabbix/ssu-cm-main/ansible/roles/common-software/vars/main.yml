@@ -1,0 +1,20 @@
+---
+packages:
+  - at
+  - bash-completion
+  - ca-certificates
+  - curl
+  - expect
+  - gcc
+  - git
+  - jq
+  - make
+  - ntp
+  - rsync
+  - screen
+  - strace
+  - tcpdump
+  - unzip
+  - net-tools
+  - wget
+  - pciutils

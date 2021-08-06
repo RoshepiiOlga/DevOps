@@ -1,0 +1,26 @@
+---
+- hosts: all
+  become: true
+  gather_facts: "yes"
+
+  pre_tasks:
+    - name: RUN_PLAYBOOK | pre_tasks 'Fail if Ansible is old'
+      fail: msg="We need updates in Ansible. Please update your kit."
+      when: ansible_version.full is version('2.7.0', '<')
+      tags:
+        - always
+
+  roles:
+    - system-update
+    - common-software
+    - timezone
+    - eth-interfaces
+    - sysctl
+    - sudo
+    - amazon-inspector
+    - { role: users, username: vykob, state: present, canSudo: true }
+
+  post_tasks:
+    - name: RUN_PLAYBOOK | post_tasks "Output information"
+      debug:
+        msg: "Finished on {{ ansible_hostname }} with {{ ansible_distribution }}"

@@ -1,0 +1,8 @@
+all:
+  children:
+    vpn:
+      hosts:
+        < ip or FQDN >
+      vars:
+        ansible_ssh_private_key_file: "{{ lookup('env','ANSIBLE_SSH_KEYDIR') }}/vykob.pem"
+        ansible_ssh_user: ec2-user

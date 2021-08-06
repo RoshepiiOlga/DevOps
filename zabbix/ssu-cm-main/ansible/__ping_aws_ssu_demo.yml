@@ -1,0 +1,8 @@
+- name: Testing my groups
+  hosts: Environment_ssudemo
+  gather_facts: yes
+
+  tasks:
+  - name: Debug my ec2 instances
+    debug:
+      msg: "hostname: {{ ansible_hostname }}"

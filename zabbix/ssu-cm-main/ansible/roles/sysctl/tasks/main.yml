@@ -1,0 +1,14 @@
+---
+
+- name: Copy default sysctl config to server
+  tags: sysctl
+  copy:
+    src: 60-ansible-default-server.conf
+    dest: /etc/sysctl.d/
+    owner: root
+    group: root
+    mode: "u=rw,go=r"
+
+- name: Re-read sysctl config from disk
+  tags: sysctl
+  command: /sbin/sysctl -p
