@@ -3,7 +3,7 @@ pipeline {
         imagename = "testimage"
         imagetag = "test1"
         registryCredential = 'roshepiyolga'
-        address = "./RoshepiiOlga/DevOps/tree/next/jenkinsfiles/Dockerfile"
+        address = "https://github.com/RoshepiiOlga/DevOps/tree/next/jenkinsfiles/Dockerfile"
         dockerImage = ''
     }
     agent any
