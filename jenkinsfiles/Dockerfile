@@ -1,11 +1,12 @@
+FROM ubuntu:18.04
 
-docker build -t myimage:latest -<<EOF
-FROM busybox
-RUN echo "hello world"
-EOF
-docker images
-docker run -d -p 49160:80 myimage:latest
-http://localhost:49160
+
+RUN apt -y update && apt -y install apache2 && install-plugins.sh && docker-slaves && github-branch-source &&\
+echo 'Hello World from Docker!' > /var/www/html/index.html
+
+
+CMD ["/usr/sbin/apache2ctl", "-D","FOREGROUND"]
+EXPOSE 80
 
 #docker build -t dockerolga:test .
 #docker images
