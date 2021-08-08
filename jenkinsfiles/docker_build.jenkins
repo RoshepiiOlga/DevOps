@@ -31,7 +31,7 @@ pipeline {
         }
         stage('Build docker image') {
             steps{
-                dir('test') {
+                dir('Jenkinsfile') {
                     sh 'docker build -t roshepiy/jenkins-images:0.1 .'
                 }
             }
