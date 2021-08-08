@@ -1,42 +1,57 @@
 pipeline {
-    environment {
-        imagename = "testimage"
-        imagetag = "test1"
-        registryCredential = 'roshepiyolga'
-        address = "https://github.com/RoshepiiOlga/DevOps/tree/next/jenkinsfiles"
-        dockerImage = ''
-    }
-    agent any
-      stages {
-        stage('Cloning Git') {
+    agent { label 'ubuntu' }
+
+    stages {
+        stage('Docker version') {
             steps {
-                git([url: 'https://github.com/RoshepiiOlga/DevOps.git', branch: 'next', credentialsId: 'RoshepiiOlga'])
+                sh "echo $USER"
+                sh 'docker version'
             }
         }
-        stage('Building image') {
+        stage('Delete workspace before build starts') {
+            steps {
+                echo 'Deleting workspace'
+                deleteDir()
+            }
+        }
+        stage('Checkout') {
             steps{
-                script {
-                    sh "docker rmi $imagename:$BUILD_NUMBER"
+                git branch: 'main',
+                    url: 'https://github.com/RoshepiiOlga/DevOps.git'        
                 }
-
-            }
         }
-        stage('Deploy Image') {
-          steps{
-            script {
-              docker.withRegistry( '', registryCredential ) {
-                dockerImage.push("$BUILD_NUMBER")
-                 dockerImage.push('latest')
-
-              }
-            }
-          }
-        }
-        stage('Remove Unused docker image') {
+        stage('Test') {
             steps{
-                sh "docker rmi $imagename:$BUILD_NUMBER"
-                sh "docker rmi $imagename:latest"
+                dir('test') {
+                    sh "ls -la "
+                    sh "pwd"
+                }
+                    sh "ls -la "
+                    sh "pwd"
+            }
+        }
+        stage('Build docker image') {
+            steps{
+                dir('test') {
+                    sh 'docker build -t roshepiy/jenkins-images:0.1 .'
+                }
+            }
+        }
+        stage('Push docker image to DockerHub') {
+            steps{
+                withDockerRegistry(credentialsId: 'dockerhub-credentials-roshepiyolga', url: 'https://index.docker.io/v1/') {
+                    sh '''
+                        docker push roshepiy/jenkins-images:0.1
+                    '''
+                }
+            }
+        }
+        stage('Delete docker image locally') {
+            steps{
+                sh 'docker rmi roshepiy/jenkins-images:0.1'
             }
         }
     }
 }
+
+
