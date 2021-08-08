@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+        address = "https://github.com/RoshepiiOlga/DevOps/tree/next/jenkinsfiles"
+        dockerImage = ''
+    }
     stages {
         stage('Docker version') {
             steps {
@@ -15,7 +19,7 @@ pipeline {
         }
         stage('Checkout') {
             steps{
-                git branch: 'main',
+                git branch: 'next',
                     url: 'https://github.com/RoshepiiOlga/DevOps.git'        
                 }
         }
@@ -31,9 +35,7 @@ pipeline {
         }
         stage('Build docker image') {
             steps{
-                dir('Jenkinsfile') {
-                    sh 'docker build -t roshepiy/jenkins-images:0.1 .'
-                }
+                sh 'docker build -t roshepiy/${dockerImage} .'                
             }
         }
         stage('Push docker image to DockerHub') {
