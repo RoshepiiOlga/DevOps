@@ -35,7 +35,7 @@ pipeline {
         }
         stage('Build docker image') {
             steps{
-                sh 'docker build -t roshepiy/${dockerImage} .'                
+                sh 'docker build --tag roshepiy/${dockerImage} .'                
             }
         }
         stage('Push docker image to DockerHub') {
