@@ -2,7 +2,9 @@ pipeline {
     agent any
     environment {
         address = "https://github.com/RoshepiiOlga/DevOps/tree/next/jenkinsfiles"
-        dockerImage = "2121"
+        dockerImage = ''
+        imagename = "testimage"
+        imagetag = "test1"
     }
     stages {
         stage('Docker version') {
@@ -34,8 +36,9 @@ pipeline {
             }
         }
         stage('Build docker image') {
-            steps{
-                sh 'docker build --tag roshepiy/${dockerImage} .'                
+            steps{            
+
+                sh 'docker.build(“$imagename”, ” -t ${imagetag} .“)'                
             }
         }
         stage('Push docker image to DockerHub') {
