@@ -3,8 +3,6 @@ pipeline {
     environment {
         address = "https://github.com/RoshepiiOlga/DevOps/tree/next/jenkinsfiles"
         dockerImage = ''
-        imagename = "testimage"
-        imagetag = "test1"
     }
     stages {
         stage('Docker version') {
@@ -35,10 +33,9 @@ pipeline {
                     sh "pwd"
             }
         }
-        stage('Build docker image') {
-            steps{            
-
-                sh 'docker.build(“$imagename”, ” -t ${imagetag} .“)'                
+       /* stage('Build docker image') {
+            steps{
+                sh 'docker build --tag roshepiy/${dockerImage} .'                
             }
         }
         stage('Push docker image to DockerHub') {
@@ -54,7 +51,7 @@ pipeline {
             steps{
                 sh 'docker rmi roshepiy/jenkins-images:0.1'
             }
-        }
+        }*/
     }
 }
 
