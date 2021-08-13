@@ -1,58 +1,37 @@
 pipeline {
-    agent any
-    environment {
-        address = "https://github.com/RoshepiiOlga/DevOps/tree/next/jenkinsfiles"
-        dockerImage = ''
+  environment {
+    registry = "roshepiyolga/jenkins-images"
+    registryCredential = 'dockerhub'
+    dockerImage = ''
+  }
+  agent any
+  stages {
+    stage('Cloning Git') {
+      steps {
+        git 'https://github.com/RoshepiiOlga/DevOps.git'
+      }
     }
-    stages {
-        stage('Docker version') {
-            steps {
-                sh "echo $USER"
-                sh 'docker version'
-            }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
         }
-        stage('Delete workspace before build starts') {
-            steps {
-                echo 'Deleting workspace'
-                deleteDir()
-            }
-        }
-        stage('Checkout') {
-            steps{
-                git branch: 'next',
-                    url: 'https://github.com/RoshepiiOlga/DevOps.git'        
-                }
-        }
-        stage('Test') {
-            steps{
-                dir('test') {
-                    sh "ls -la "
-                    sh "pwd"
-                }
-                    sh "ls -la "
-                    sh "pwd"
-            }
-        }
-       /* stage('Build docker image') {
-            steps{
-                sh 'docker build --tag roshepiy/${dockerImage} .'                
-            }
-        }
-        stage('Push docker image to DockerHub') {
-            steps{
-                withDockerRegistry(credentialsId: 'dockerhub-credentials-roshepiyolga', url: 'https://index.docker.io/v1/') {
-                    sh '''
-                        docker push roshepiy/jenkins-images:0.1
-                    '''
-                }
-            }
-        }
-        stage('Delete docker image locally') {
-            steps{
-                sh 'docker rmi roshepiy/jenkins-images:0.1'
-            }
-        }*/
+      }
     }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push()
+          }
+        }
+      }
+    }
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $registry:$BUILD_NUMBER"
+      }
+    }
+  }
 }
-
 

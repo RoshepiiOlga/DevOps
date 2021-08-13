@@ -1,24 +1,19 @@
-FROM ubuntu:18.04
-
-
-RUN apt -y update && apt -y install apache2 && install-plugins.sh && docker-slaves && github-branch-source &&\
-echo 'Hello World from Docker!' > /var/www/html/index.html
-
-
-CMD ["/usr/sbin/apache2ctl", "-D","FOREGROUND"]
-EXPOSE 80
-
-#docker build -t dockerolga:test .
-#docker images
-#docker run -p 49160:7070 miltonc/dockerwebapp
-#http://localhost:49160
-#https://stackoverflow.com/questions/45140614/jenkins-pipeline-sh-fail-with-cannot-run-program-nohup-on-windows
-
-
-#docker run -i -t ubuntu /bin/bash
-#    echo docker images sudo
-#set
-#FROM ubuntu:20.04
-# sudo docker images
-#RUN sudo docker images : grep Ubuntu
-#RUN sudo docker build -t testimage:test1 https://github.com/RoshepiiOlga/DevOps/tree/next/jenkinsfiles
+FROM jenkins/jenkins:lts
+USER root
+RUN apt-get update && \
+apt-get -y install apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg2 \
+    software-properties-common && \
+curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; 
+echo "$ID")/gpg > /tmp/dkey; apt-key add /tmp/dkey && \
+add-apt-repository \
+    "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
+    $(lsb_release -cs) \
+    stable" && \
+apt-get update && \
+apt-get -y install docker-ce
+RUN apt-get install -y docker-ce
+RUN usermod -a -G docker jenkins
+USER jenkins
