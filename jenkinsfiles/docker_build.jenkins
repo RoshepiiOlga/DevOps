@@ -2,9 +2,7 @@ pipeline {
     agent any
     environment {
         address = "https://github.com/RoshepiiOlga/DevOps/tree/next/jenkinsfiles"
-        dockerImage = '2121'
-        registry = "docker_hub_account/repository_name"
-        registryCredential = ‘dockerhub’
+        dockerImage = "2121"
     }
     stages {
         stage('Docker version') {
