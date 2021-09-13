@@ -1,0 +1,52 @@
+---
+- name: "Create user: {{ username }}"
+  user:
+    name: "{{ username }}"
+    group: users
+    shell: /bin/bash
+    state: present
+  when: state == "present"
+
+- name: "Generate and set password for {{ username }}"
+  shell: "echo \"{{ username }}:`openssl rand -base64 32`\" | chpasswd"
+  when:
+    - state == "present"
+
+- name: "Create .ssh directory for {{ username }}"
+  file:
+    path: /home/{{ username }}/.ssh
+    state: directory
+    owner: "{{ username }}"
+    group: users
+  when: state == "present"
+
+- name: "Manage key for {{ username }}"
+  copy:
+    src: "{{ username }}"
+    dest: /home/{{ username }}/.ssh/authorized_keys
+    owner: "{{ username }}"
+  when: state == "present"
+
+- name: Set sudo group depending on linux distro - default [sudo]
+  set_fact:
+    sudogroup: sudo
+  when: ansible_os_family == "Debian"
+
+- name: Set sudo group depending on linux distro - default For Amazon Linux[wheel]
+  set_fact:
+    sudogroup: wheel
+  when: ansible_distribution == "Amazon" and ansible_os_family == "RedHat"
+
+- name: "Add sudo for {{ username }}"
+  command: gpasswd -a "{{ username }}" "{{ sudogroup }}"
+  when:
+    - state == "present"
+    - canSudo|bool
+
+- name: "Remove user {{ username }}"
+  user:
+    name: "{{ username }}"
+    state: absent
+    remove: true
+    force: true
+  when: state == "absent"

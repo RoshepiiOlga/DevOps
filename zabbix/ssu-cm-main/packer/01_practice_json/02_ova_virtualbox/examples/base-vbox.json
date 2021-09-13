@@ -1,0 +1,54 @@
+{
+	"variables": {
+		"ami_name": "debian-10-base-{{timestamp}}",
+		"base_ova_filename": "debian-local.ova"
+	},
+	"builders": [
+		{
+			"type": "virtualbox-ovf",
+			"source_path": "{{pwd}}/{{user `base_ova_filename`}}",
+			"format": "ova",
+			"keep_registered": true,
+			"headless": true,
+			"output_directory": "{{pwd}}/packer_output/{{user `ami_name`}}",
+			"ssh_username": "test",
+			"ssh_password": "test",
+			"shutdown_command": "sudo -S shutdown -P now",
+			"guest_additions_mode": "disable"
+		}
+	],
+	"provisioners": [
+		{
+			"type": "shell",
+			"inline": [
+				"sleep 10",
+				"sudo apt install -y curl python3-pip build-essential libssl-dev libffi-dev ansible"
+			]
+		},
+		{
+			"type": "ansible-local",
+			"playbook_file": "../../../../ansible/run_playbook.yaml",
+			"playbook_dir": "../../../../ansible",
+			"role_paths": [
+				"../../../../ansible/roles"
+			],
+			"clean_staging_directory": true
+		},
+		{
+			"type": "shell",
+			"inline": [
+				"sudo mkdir -p /opt/cis-hardening",
+				"cd /opt/cis-hardening && sudo git clone https://github.com/ovh/debian-cis.git .",
+				"sudo cp debian/default /etc/default/cis-hardening",
+				"sudo mkdir -p /opt/lynis && cd /opt/lynis && sudo  git clone https://github.com/CISOfy/lynis .",
+				"echo '\nHardening Results:\n'",
+				"sudo bash /opt/cis-hardening/bin/hardening.sh --audit-all",
+				"echo '\nDebsecan Results:\n'",
+				"sudo debsecan --format detail",
+				"echo '\nlynis Results:\n'",
+				"sudo chown -R 0:0 /opt/lynis/ && sudo bash /opt/lynis/lynis audit system --reverse-colors --verbose"
+			]
+		}
+
+	]
+}

@@ -1,0 +1,53 @@
+---
+# Install roles from Ansible galaxy (https://galaxy.ansible.com/)
+# https://galaxy.ansible.com/docs/using/installing.html
+#
+# # from galaxy
+# - src: yatesr.timezone
+#   from GitHub
+# - src: https://github.com/bennojoy/nginx
+# # from GitHub, overriding the name and specifying a specific tag
+# - src: https://github.com/bennojoy/nginx
+#   version: master
+#   name: nginx_role
+# # from a webserver, where the role is packaged in a tar.gz
+# - src: https://some.webserver.example.com/files/master.tar.gz
+#   name: http-role
+# # from Bitbucket
+# - src: git+http://bitbucket.org/willthames/git-ansible-galaxy
+#   version: v1.4
+# # from Bitbucket, alternative syntax and caveats
+# - src: http://bitbucket.org/willthames/hg-ansible-galaxy
+#   scm: hg
+# # from GitLab or other git-based scm
+# - src: git@gitlab.company.com:mygroup/ansible-base.git
+#   scm: git
+#   version: "0.1"  # quoted, so YAML doesn't parse this as a floating-point value
+#
+#   ansible-galaxy install --roles-path roles.galaxy -r requirements.yml
+#
+#    provisioner "ansible-local" {
+#    galaxy_file = "../ansible/requirements.yml"
+#    }
+#
+#
+# We normally check the downloaded roles into source control to snapshot
+# a working version and ensure availability.
+
+roles:
+  - src: datadog.datadog
+  - src: geerlingguy.ntp
+  - src: geerlingguy.pip
+  - src: jnv.unattended-upgrades
+  - src: geerlingguy.apache
+  - src: geerlingguy.postgresql
+  - src: geerlingguy.php
+  - src: geerlingguy.composer
+
+
+
+collections:
+  - name: amazon.aws
+  - name: community.aws
+  - name: community.grafana
+  - name: devsec.hardening

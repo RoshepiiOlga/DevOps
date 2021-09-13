@@ -1,0 +1,65 @@
+# -*- mode: utf-8 -*-
+# vi:  ft=dosini
+
+# ansible-playbook ansible/$playbook--private-key=~/.ssh/keys/id_rsa -u centos
+load_balancer ansible_ssh_host=ec2-3-127-232-41.eu-central-1.compute.amazonaws.com ansible_user=ubuntu ansible_python_interpreter=/usr/bin/python3
+database_server ansible_ssh_host=ec2-54-93-56-57.eu-central-1.compute.amazonaws.com ansible_user=ubuntu ansible_python_interpreter=/usr/bin/python3
+database_server_2 ansible_ssh_host=ec2-3-126-83-239.eu-central-1.compute.amazonaws.com ansible_user=ubuntu ansible_python_interpreter=/usr/bin/python3
+web_server_1 ansible_ssh_host=ec2-3-122-193-203.eu-central-1.compute.amazonaws.com ansible_user=ubuntu
+web_server_2 ansible_ssh_host=ec2-52-59-220-74.eu-central-1.compute.amazonaws.com ansible_user=ubuntu
+web_server_3 ansible_ssh_host=ec2-3-127-147-149.eu-central-1.compute.amazonaws.com ansible_user=ubuntu
+web_server_4 ansible_ssh_host=ec2-54-93-33-32.eu-central-1.compute.amazonaws.com ansible_user=ubuntu
+
+[operator]
+; avoid "did not meet _ requirements" warnings when using -v
+; see https://github.com/ansible/ansible/issues/48859
+
+; this task will connect as brian not as carol
+; ansible -u carol -e 'ansible_user=brian' -a whoami all
+
+; Group: ansible -i ansible/inventory/hosts -m ping operator
+; Host: ansible -i ansible/inventory/hosts -m ping localhost -vvv
+; host_list declined parsing /home/vykob/Projects/Sigma/configuration-managment-tutor/ansible/inventory/hosts as it did not pass its verify_file() method
+; script declined parsing /home/vykob/Projects/Sigma/configuration-managment-tutor/ansible/inventory/hosts as it did not pass its verify_file() method
+; auto declined parsing /home/vykob/Projects/Sigma/configuration-managment-tutor/ansible/inventory/hosts as it did not pass its verify_file() method
+; Parsed /home/vykob/Projects/Sigma/configuration-managment-tutor/ansible/inventory/hosts inventory source with ini plugin
+localhost ansible_ssh_host=127.0.0.1 ansible_user=ubuntu ansible_python_interpreter=/usr/bin/python3 ansible_connection=local
+
+[webservers]
+web_server_1
+web_server_2
+web_server_3
+web_server_4
+
+[dbservers]
+database_server
+database_server_2
+
+[loadbalancers]
+load_balancer
+
+[production]
+load_balancer
+web_server_1
+web_server_2
+web_server_3
+web_server_4
+database_server
+database_server_2
+
+[function:children]
+webservers
+dbservers
+loadbalancers
+environments
+
+[environments:children]
+production
+
+
+[nginx]
+symfony-dev.local
+
+
+[symfony]
+symfony-dev.local

@@ -1,13 +1,9 @@
-FROM nginx:latest
+FROM ubuntu:18.04
 
-# Adding custom index.html hosted on Github Gist
 
-ADD https://raw.githubusercontent.com/RoshepiiOlga/DevOps/bra/docker/index.html /usr/share/nginx/html/
+RUN apt -y update && apt -y install apache2 && \
+echo 'Hello World from Docker!' > /var/www/html/index.html
 
-# Adding read permissions to custom index.html
 
-RUN chmod +r /usr/share/nginx/html/index.html
-
-#'nginx -g daemon off" will run as default command when any container is run that uses the image that was built using this Dockerfile"
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/usr/sbin/apache2ctl", "-D","FOREGROUND"]
+EXPOSE 80

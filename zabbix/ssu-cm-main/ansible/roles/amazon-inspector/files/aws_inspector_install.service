@@ -1,0 +1,10 @@
+[Unit]
+Description=Installs AWS Inspector
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/bin/aws_inspector_install.sh
+
+[Install]
+WantedBy=multi-user.target

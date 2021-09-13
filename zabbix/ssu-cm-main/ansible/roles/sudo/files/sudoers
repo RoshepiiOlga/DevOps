@@ -1,0 +1,19 @@
+Defaults        env_reset
+Defaults        mail_badpass
+Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+# We are limited on root FS diskspace so we can not log I/O
+#Defaults        iolog_dir="/var/log/sudo-io/%{user}"
+#Defaults        maxseq=256
+#Defaults        log_output
+#Defaults        log_input
+#Defaults!/usr/bin/sudoreplay    !log_output
+#Defaults!/sbin/reboot           !log_output
+
+Defaults env_keep += "SSH_AUTH_SOCK"
+
+root    ALL=(ALL:ALL) ALL
+
+%sudo   ALL=(ALL:ALL) NOPASSWD: ALL
+%wheel   ALL=(ALL:ALL) NOPASSWD: ALL
+%admin   ALL=(ALL:ALL) NOPASSWD: ALL

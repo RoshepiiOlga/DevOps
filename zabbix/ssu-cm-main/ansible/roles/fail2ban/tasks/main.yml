@@ -1,0 +1,19 @@
+---
+
+- name: Install fail2ban
+  package:
+    name: fail2ban
+    state: latest
+
+- name: Copy config file
+  copy:
+    src: jail_ssh.local
+    dest: /etc/fail2ban/jail_ssh.local
+    owner: root
+    mode: 0644
+
+- name: Enable fail2ban service
+  systemd:
+    name: fail2ban
+    state: stopped
+    enabled: true

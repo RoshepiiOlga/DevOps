@@ -1,0 +1,58 @@
+---
+- name: AWS Hello
+  gather_facts: true
+  hosts: localhost
+  connection: localhost
+
+  tasks:
+
+    - name: Ansible fact - ansible_date_time
+      debug:
+        var: ansible_date_time
+
+    - name: Ansible fact - ansible_date_time.epoch
+      debug:
+       msg: "Timestamp in the epoch format: {{ ansible_date_time.epoch }}"
+
+    - name: Get the current caller identity information
+      amazon.aws.aws_caller_info:
+      register: caller_info
+
+    - name: Print caller_info
+      debug:
+          msg: "{{ caller_info }}"
+
+    - name: aws_region_info
+      aws_region_info:
+        filters:
+          region_name: "{{ ec2_region }}"
+      register: aws_region_info
+
+    - name: Print aws_region_info
+      debug:
+          msg: "{{ aws_region_info }}"
+
+    - name: region
+      set_fact:
+        region: "{{ aws_region_info.regions[0].region_name }}"
+
+# S3 Buckets
+    - name: Create new bucket
+      aws_s3:
+        bucket: "ansible-bucket-{{  ansible_date_time.epoch }}"
+        mode: create
+        region: "{{ region }}"
+
+    - name: Get bucket info
+      community.aws.aws_s3_bucket_info:
+      register: result
+
+    - name: List buckets
+      ansible.builtin.debug:
+        msg: "{{ result['buckets'] }}"
+
+    - name: Remove an S3 bucket and any keys it contains
+      amazon.aws.s3_bucket:
+        name: "ansible-bucket-{{  ansible_date_time.epoch }}"
+        state: absent
+        force: yes

@@ -1,0 +1,4 @@
+ec2_region: eu-west-1
+vpc_id: vpc-e184ad87
+ec2_vpc_subnet: subnet-de69f3b8
+student: Slava

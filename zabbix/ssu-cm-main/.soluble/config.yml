@@ -1,0 +1,11 @@
+---
+daily_assessments_enabled: true
+pr_status_thresholds:
+  critical: 0
+  high: 0
+  medium: 99999
+  low: 99999
+pr_status_force_pass_enabled: true
+pr_status_enabled: true
+pr_comments_enabled: true
+pr_comments_on_passed_check_enabled: true

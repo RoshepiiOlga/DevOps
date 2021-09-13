@@ -1,0 +1,15 @@
+---
+
+- name: Remove old /etc/localtime
+  tags: conf-timezone
+  file:
+    path: /etc/localtime
+    state: absent
+
+- name: Link UTC timezone to /etc/localtime
+  tags: conf-timezone
+  file:
+    path: /etc/localtime
+    src: /usr/share/zoneinfo/UTC
+    state: link
+    force: true

@@ -1,0 +1,87 @@
+---
+name: "Lint Repository Source Code"
+on:
+  push:
+    branches:
+      - feature/*
+      - epic/*
+      - fix/*
+      - ssu/*
+  pull_request:
+    branches: [ main ]
+    types: [opened, synchronize, reopened]
+  schedule:
+    - cron: '29 23 * * 6'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'python' ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2.3.4
+
+      - name: Set up Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: '3.x'
+
+      - name: Cache ShiftLeftSecurity vdb
+        uses: actions/cache@v2
+        with:
+          path: |
+            ${{ github.workspace }}/vdb
+          key: ${{ runner.os }}
+
+      - name: Perform ShiftLeftSecurity Scan
+        uses: ShiftLeftSecurity/scan-action@master
+        env:
+          VDB_HOME: ${{ github.workspace }}/vdb
+          WORKSPACE: https://github.com/${{ github.repository }}/blob/${{ github.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SCAN_AUTO_BUILD: true
+        with:
+          output: reports
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
+
+      - name: Perform Super Linter Analysis
+        uses: github/super-linter@v4.2.2
+        env:
+          LOG_LEVEL: VERBOSE
+          LOG_FILE: super-linter.log
+          ACTIONS_RUNNER_DEBUG: false
+          ERROR_ON_MISSING_EXEC_BIT: true
+          IGNORE_GITIGNORED_FILES: true
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_JSON: true
+          VALIDATE_TERRAGRUNT: true
+          ANSIBLE_DIRECTORY: ansible
+          # ANSIBLE_CONFIG_FILE: ansible/ansible-lint.yaml
+          # YAML_CONFIG_FILE: ansible/yaml-lint.yml
+          VALIDATE_YAML: true
+          VALIDATE_BASH: true
+          VALIDATE_BASH_EXEC: true
+          VALIDATE_DOCKERFILE: true
+          VALIDATE_DOCKERFILE_HADOLINT: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_SQL: true
+          VALIDATE_XML: true
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

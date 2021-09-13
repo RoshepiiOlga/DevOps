@@ -1,0 +1,13 @@
+---
+
+- name: Patch grub cmdline
+  tags: eth-interfaces
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX=(.*)"'
+    line: '\1 net.ifnames=0 biosdevname=0"'
+    backrefs: true
+
+#- name: Rebuild grub configuration
+#  tags: eth-interfaces
+#  command: /usr/sbin/grub-mkconfig -o /boot/grub/grub.cfg

@@ -1,0 +1,156 @@
+## This playbook has vault encrypted strings in the group_vars/all file.
+## The playbook has to be called with the --vault-password-file option or edit /etc/ansible/ansible.cfg file with the password file name.
+
+---
+- name: Test truthiness
+  hosts: localhost
+  gather_facts: False
+  vars:
+    truthy_vars:
+    # TRUE
+    - True
+    - 1
+    - "true"
+    # FALSE
+    - "false"
+    - null
+    - False
+    - 0
+    # ERROR (invalid sytax error stops the loop of the first of these)
+    - "null"
+    - "defined string"
+    # ERROR
+    # truthy_var_undefined
+    # FALSE
+    truthy_var_defined:
+  tasks:
+  - name: Test truthy
+    debug:
+      msg: "is truthy"
+    ignore_errors: True # beware, the loo
+    when: item
+    loop: "{{ truthy_vars }}"
+    loop_control:
+      label: Test {{ item }}
+  - name: truthy_var_undefined
+    debug:
+    when: truthy_var_undefined
+    ignore_errors: true
+  - name: truthy_var_defined
+    debug:
+    when: truthy_var_defined
+
+- name: Test | default(False)
+  hosts: localhost
+  gather_facts: False
+  vars:
+    default_pipe_vars:
+    # TRUE
+    - True
+    - 1
+    - "true"
+    # beware these:
+    - "false"
+    - "null"
+    - "defined string"
+    # FALSE
+    - null
+    - False
+    - 0
+    # FALSE
+    # default_pipe_undefined
+    # FALSE
+    default_pipe_defined:
+  tasks:
+  - name: Test | default(False)
+    debug:
+      msg: "is not | default(False)"
+    when: item | default(False)
+    loop: "{{ default_pipe_vars }}"
+    loop_control:
+      label: Test {{ item }}
+  - name: default_pipe_undefined | default(False)
+    debug:
+    when: default_pipe_undefined | default(False)
+  - name: default_pipe_defined | default(False)
+    debug:
+    when: default_pipe_defined | default(False)
+
+- name: Test | bool
+  hosts: localhost
+  gather_facts: False
+  vars:
+    bool_vars:
+    # TRUE
+    - True
+    - 1
+    - "true"
+    # FALSE
+    - "defined string"
+    - "null"
+    - "false"
+    - null
+    - False
+    - 0
+    # ERROR
+    # bool_undefined
+    # FALSE
+    bool_defined:
+  tasks:
+  - name: Test bool parsing
+    debug:
+      msg: "parsed as true booleans"
+    when: item | bool
+    loop: "{{ bool_vars }}"
+    loop_control:
+      label: Test {{ item }}
+  - name: bool_undefined | bool
+    debug:
+    when: bool_undefined | bool
+    ignore_errors: true
+  - name: bool_defined var | bool
+    debug:
+    when: bool_defined | bool
+
+
+- name: Test is defined and | bool
+  hosts: localhost
+  gather_facts: False
+  vars:
+    defined_bool_vars:
+    # TRUE
+    - True
+    - 1
+    - "true"
+    # FALSE
+    - "defined string"
+    - "null"
+    - "false"
+    - null
+    - False
+    - 0
+    # FALSE
+    # defined_bool_undefined
+    # FALSE
+    defined_bool_defined:
+  tasks:
+  - name: Test bool parsing
+    debug:
+      msg: "parsed as true booleans"
+    when:
+    - item is defined
+    - item | bool
+    loop: "{{ defined_bool_vars }}"
+    loop_control:
+      label: Test {{ item }}
+  - name: defined_bool_undefined | bool
+    debug:
+    when:
+    - defined_bool_undefined is defined
+    - defined_bool_undefined | bool
+    ignore_errors: true
+  - name: defined_bool_defined var | bool
+    debug:
+    when:
+    - defined_bool_defined is defined
+    - defined_bool_defined | bool

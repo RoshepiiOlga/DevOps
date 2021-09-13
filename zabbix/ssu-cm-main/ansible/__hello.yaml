@@ -1,0 +1,29 @@
+# ansible-playbook -i inventory/localhost.ini __hello.yaml --connection=local -e @_extra_vars.yml
+# https://stackoverflow.com/questions/37184699/ansible-ssh-error-connection-in-localhost/37186096
+---
+- hosts: localhost
+  connection: local
+  gather_facts: True
+
+  vars_files:
+  - _extra_vars.yml
+
+  tasks:
+
+  - name: Print all facts
+    debug:
+      var: ansible_facts
+
+  - name: "Output Name"
+    debug:
+      msg: "Hello {{ student }}"
+
+  - name: "Output information"
+    debug:
+      msg: "{{ ansible_hostname }} with {{ ansible_distribution }}"
+
+  - name: Prints various Ansible facts
+    debug:
+      msg: >
+        The default IPv4 address of {{ ansible_facts.fqdn }}
+        is {{ ansible_facts.default_ipv4.address }}

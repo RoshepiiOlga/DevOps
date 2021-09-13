@@ -1,0 +1,30 @@
+{
+    "variables": {
+        "password": "packer"
+    },
+    "builders": [
+        {
+            "type": "virtualbox-iso",
+            "guest_os_type": "Other_64",
+            "iso_url": "http://releases.ubuntu.com/focal/ubuntu-20.04.2-live-server-amd64.iso",
+            "iso_checksum": "9af24f2d3a01dd8531d65d357059a6dc216f1625",
+            "ssh_username": "root",
+            "ssh_password": "{{user `password`}}",
+            "shutdown_command": "poweroff",
+            "boot_command": [
+                "root<enter><wait>",
+                "setup-alpine<enter><wait>us<enter><wait>us<enter><wait>localhost<enter><wait><enter><wait>dhcp<enter><wait>n<enter><wait10>{{user `password`}}<enter><wait>{{user `password`}}<enter><wait>America/Vancouver<enter><wait5>none<enter><wait>chrony<enter><wait>1<enter><wait>openssh<enter><wait>openssh<enter><wait>sda<enter><wait>sys<enter><wait5>y<enter><wait1m>",
+                "echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config<enter><wait>",
+                "/etc/init.d/sshd restart <enter><wait5>"
+            ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "apk update"
+            ]
+        }
+    ]
+}

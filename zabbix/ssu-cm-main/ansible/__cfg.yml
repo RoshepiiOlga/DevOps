@@ -1,0 +1,25 @@
+## This playbook has vault encrypted strings in the group_vars/all file.
+## The playbook has to be called with the --vault-password-file option or edit /etc/ansible/ansible.cfg file with the password file name.
+
+---
+- name: Access ansible.cfg
+  hosts: localhost
+  gather_facts: False
+
+  tasks:
+
+  - name: look for ansible.cfg, see http://docs.ansible.com/ansible/intro_configuration.html
+    local_action: stat path={{ item }}
+    register: ansible_cfg_stat
+    when: (item | length) and not (ansible_cfg_stat is defined and ansible_cfg_stat.stat.exists)
+    with_items:
+      - "{{ lookup('env', 'ANSIBLE_CONFIG') }}"
+      - ansible.cfg
+      - "{{ lookup('env', 'HOME') }}/.ansible.cfg"
+      - /etc/ansible/ansible.cfg
+
+  - name: set fact for later use
+    set_fact:
+      ansible_cfg: "{{ item.item }}"
+    when: item.stat is defined and item.stat.exists
+    with_items: "{{ ansible_cfg_stat.results }}"
